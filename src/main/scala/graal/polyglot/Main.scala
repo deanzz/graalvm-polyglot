@@ -9,21 +9,40 @@ object Main {
     var context: Option[Context] = None
     try {
       context = Some(Context.newBuilder().allowAllAccess(true).build())
+      var start = System.currentTimeMillis()
       helloPython(context.get)
+      println(s"helloPython elapsed time = ${System.currentTimeMillis() - start}ms")
+      start = System.currentTimeMillis()
       helloR(context.get)
+      println(s"helloR elapsed time = ${System.currentTimeMillis() - start}ms")
+      start = System.currentTimeMillis()
       helloJs(context.get)
+      println(s"helloJs elapsed time = ${System.currentTimeMillis() - start}ms")
 
-      println(s"getPythonResult = ${getPythonResult(context.get, 99)}")
-      println(s"getRResult = ${getRResult(context.get, 99)}")
-      println(s"getJsResult = ${getJsResult(context.get, 99)}")
+      start = System.currentTimeMillis()
+      println(s"getPythonResult = ${getPythonResult(context.get, 99)}, elapsed time = ${System.currentTimeMillis() - start}ms")
+      start = System.currentTimeMillis()
+      println(s"getRResult = ${getRResult(context.get, 99)}, elapsed time = ${System.currentTimeMillis() - start}ms")
+      start = System.currentTimeMillis()
+      println(s"getJsResult = ${getJsResult(context.get, 99)}, elapsed time = ${System.currentTimeMillis() - start}ms")
 
-      println(s"pythonAccessJava = ${pythonAccessJava(context.get)}")
-      println(s"RAccessJava = ${RAccessJava(context.get)}")
-      println(s"JsAccessJava = ${JsAccessJava(context.get)}")
+      start = System.currentTimeMillis()
+      println(s"pythonAccessJava = ${pythonAccessJava(context.get)}, elapsed time = ${System.currentTimeMillis() - start}ms")
+      start = System.currentTimeMillis()
+      println(s"RAccessJava = ${RAccessJava(context.get)}, elapsed time = ${System.currentTimeMillis() - start}ms")
+      start = System.currentTimeMillis()
+      println(s"JsAccessJava = ${JsAccessJava(context.get)}, elapsed time = ${System.currentTimeMillis() - start}ms")
 
-      println(s"scalaAccessJs = ${scalaAccessJs(context.get)}")
-      println(s"scalaAccessPython = ${scalaAccessPython(context.get)}")
-      println(s"scalaAccessR = ${scalaAccessR(context.get)}")
+      start = System.currentTimeMillis()
+      println(s"scalaAccessJs = ${scalaAccessJs(context.get)}, elapsed time = ${System.currentTimeMillis() - start}ms")
+      start = System.currentTimeMillis()
+      println(s"scalaAccessPython = ${scalaAccessPython(context.get)}, elapsed time = ${System.currentTimeMillis() - start}ms")
+      start = System.currentTimeMillis()
+      println(s"scalaAccessR = ${scalaAccessR(context.get)}, elapsed time = ${System.currentTimeMillis() - start}ms")
+
+      start = System.currentTimeMillis()
+      numpyTest(context.get)
+      println(s"numpyTest, elapsed time = ${System.currentTimeMillis() - start}ms")
     } catch {
       case t: Throwable => t.printStackTrace()
     } finally {
@@ -137,6 +156,15 @@ object Main {
     val text = result.getMember("text").asString()
     val array = result.getMember("arr").as(classOf[Array[Int]])
     (id, text, array.mkString(" "))
+  }
+
+  def numpyTest(context: Context) = {
+    val source = Source.create("python",
+      "import numpy as np\n" +
+      "perm = np.random.permutation(150)\n" +
+      "print(perm)\n"
+    )
+    context.eval(source)
   }
 
 }
